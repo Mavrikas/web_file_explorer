@@ -106,7 +106,7 @@ export default function ContentViewer({
             setContent(file?.content);
             setErrorContent('');
         }
-    }, [isEditing]);
+    }, [isEditing, file]);
 
     const displayContent = () => {
         if (typeof file.content === 'string') {

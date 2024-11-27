@@ -11,14 +11,14 @@ import AddFileModal from '@/components/AddFileModal/AddFileModal';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function Home() {
-    const [fileList, setFileList] = useState<any>([]);
+    const [fileList, setFileList] = useState<Data[]>([]);
     const [selectedFile, setSelectedFile] = useState<any>(null);
     const [selectedFileToDelete, setSelectedFileToDelete] = useState<any>(null);
     const [selectedPath, setSelectedPath] = useState<any>(null);
-    const [modalDeleteOpen, setDeleteModalOpen] = useState<any>(false);
-    const [modalAddFolderOpen, setAddFolderModalOpen] = useState<any>(false);
-    const [modalAddFileOpen, setAddFileModalOpen] = useState<any>(false);
-    const [pathsArrays, setPathsArray] = useState<any>([]);
+    const [modalDeleteOpen, setDeleteModalOpen] = useState(false);
+    const [modalAddFolderOpen, setAddFolderModalOpen] = useState(false);
+    const [modalAddFileOpen, setAddFileModalOpen] = useState(false);
+    const [pathsArrays, setPathsArray] = useState<string[]>([]);
 
     const handleFileSelect = (file: Data | null) => {
         setSelectedFile(file);
