@@ -2,14 +2,15 @@
 import ContentViewer from '@/components/ContentViewer/ContentViewer';
 import AddFolderModal from '@/components/AddFolderModal/AddFolderModal';
 import DeleteModal from '@/components/DeleteModal/DeleteModal';
-import Modal from '@/components/Modal/Modal';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import { getFiles } from '@/controllers/files';
 import { Data } from '@/store/types';
 import { useEffect, useState, MouseEvent } from 'react';
 import AddFileModal from '@/components/AddFileModal/AddFileModal';
 import { v4 as uuidv4 } from 'uuid';
+import { dummyData } from '../../data/data';
 
+let dummyDataClone = JSON.parse(JSON.stringify(dummyData));
 export default function Home() {
     const [fileList, setFileList] = useState<Data[]>([]);
     const [selectedFile, setSelectedFile] = useState<any>(null);
@@ -61,6 +62,7 @@ export default function Home() {
             }
         }
 
+        dummyDataClone = tempFiles;
         setFileList(tempFiles);
         handleDeleteModalVisibility();
     };
@@ -93,6 +95,7 @@ export default function Home() {
         } else {
             findAndAddFolder(tempFiles, selectedPath);
         }
+        dummyDataClone = tempFiles;
         setFileList(tempFiles);
         handleAddFolderModalVisibility();
     };
@@ -124,7 +127,7 @@ export default function Home() {
         } else {
             findAndAddFile(tempFiles, selectedPath);
         }
-
+        dummyDataClone = tempFiles;
         setFileList(tempFiles);
         handleAddFileModalVisibility();
     };
@@ -156,7 +159,7 @@ export default function Home() {
                 return acc;
             }, []);
         };
-        setFileList(filterFiles(getFiles()));
+        setFileList(filterFiles(dummyDataClone));
     };
 
     const updateFile = (content: string) => {
@@ -171,6 +174,7 @@ export default function Home() {
             }
         };
         findAndUpdateFile(tempFiles, selectedFile.path.split('\\'));
+        dummyDataClone = tempFiles;
         setFileList(tempFiles);
         setSelectedFile({ ...selectedFile, content: content });
     };
