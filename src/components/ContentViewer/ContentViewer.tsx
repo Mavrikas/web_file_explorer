@@ -1,10 +1,11 @@
 import { Data } from '@/store/types';
 import FolderOpened from '../Icons/FolderOpened';
-import AddFile from '../Icons/AddFile';
 import FileIcon from '../Icons/FileIcon';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '../Button/Button';
 import { isJson } from '@/utils';
+import { PNG_URL_REGEX } from '@/constants';
+import ErrorMessage from '../ErrorMessage/ErrorMessage';
 
 type ContentViewerProps = {
     file: Data;
@@ -43,7 +44,10 @@ export default function ContentViewer({
                             key={`folder-${item.id}`}
                             className="list-none pl-[20px]"
                         >
-                            {item.name}
+                            <div className="flex flex-row items-center">
+                                <FolderOpened />
+                                <span className="ml-[10px]">{item.name}</span>
+                            </div>
                             {createStuctureRecursive(item.content)}
                         </ul>
                     );
@@ -52,9 +56,10 @@ export default function ContentViewer({
                         <li
                             id={`file-${item.id}`}
                             key={`file-${item.id}`}
-                            className="list-none pl-[20px]"
+                            className="list-none pl-[20px] flex flex-row items-center"
                         >
-                            {item.name}
+                            <FileIcon />
+                            <span className="ml-[10px]">{item.name}</span>
                         </li>
                     );
                 }
@@ -76,10 +81,7 @@ export default function ContentViewer({
             hasError = true;
         }
 
-        if (
-            type === 'png' &&
-            !contentTrimmed.match(/(https?:\/\/.*\.(?:png))/i)
-        ) {
+        if (type === 'png' && !contentTrimmed.match(PNG_URL_REGEX)) {
             setErrorContent('Invalid image URL');
             hasError = true;
         }
@@ -108,8 +110,9 @@ export default function ContentViewer({
 
     const displayContent = () => {
         if (typeof file.content === 'string') {
+            let fileDisplay;
             if (file.name.includes('png')) {
-                return isEditing ? (
+                fileDisplay = isEditing ? (
                     <>
                         <label htmlFor="url" className="mt-4">
                             Image URL
@@ -126,7 +129,7 @@ export default function ContentViewer({
                     <img src={file.content as string} alt={file.name} />
                 );
             } else if (file.name.includes('json')) {
-                return file.content.length ? (
+                fileDisplay = file.content.length ? (
                     isEditing ? (
                         <textarea
                             className="w-full h-[400px] resize-none"
@@ -144,7 +147,7 @@ export default function ContentViewer({
                     )
                 ) : null;
             } else {
-                return isEditing ? (
+                fileDisplay = isEditing ? (
                     <textarea
                         value={content as string}
                         onChange={handleContentChange}
@@ -154,6 +157,16 @@ export default function ContentViewer({
                     <p>{file.content as string}</p>
                 );
             }
+            return (
+                <>
+                    <div
+                        className={`border-2 border-gray-500 min-w-[500px] min-h-[400px] w-9/12 p-[3px] bg-white overflow-auto ${errorContent && 'border-red-500'}`}
+                    >
+                        {fileDisplay}
+                    </div>
+                    <ErrorMessage errorContent={errorContent} />
+                </>
+            );
         } else {
             return createStucture();
         }
@@ -173,35 +186,32 @@ export default function ContentViewer({
                     {file.path}
                 </h1>
 
-                <div className="flex justify-between  mt-[20px] mb-[5px] w-[200px]">
-                    {isEditing ? (
-                        <>
+                {typeof file.content === 'string' && (
+                    <div className="flex justify-between  mt-[20px] mb-[5px] w-[200px]">
+                        {isEditing ? (
+                            <>
+                                <Button
+                                    text="Save"
+                                    onClick={() => validateInput()}
+                                    type="primary"
+                                />
+                                <Button
+                                    text="Cancel"
+                                    onClick={handleEdit}
+                                    type="secondary"
+                                />
+                            </>
+                        ) : (
                             <Button
-                                text="Save"
-                                onClick={() => validateInput()}
+                                text="Edit"
+                                onClick={() => handleEdit()}
                                 type="primary"
                             />
-                            <Button
-                                text="Cancel"
-                                onClick={handleEdit}
-                                type="secondary"
-                            />
-                        </>
-                    ) : (
-                        <Button
-                            text="Edit"
-                            onClick={() => handleEdit()}
-                            type="primary"
-                        />
-                    )}
-                </div>
+                        )}
+                    </div>
+                )}
 
-                <div
-                    className={`border-2 border-gray-500 min-w-[500px] min-h-[400px] w-9/12 p-[3px] bg-white overflow-auto ${errorContent && 'border-red-500'}`}
-                >
-                    {displayContent()}
-                </div>
-                {errorContent && <p className="text-red-500">{errorContent}</p>}
+                {displayContent()}
             </div>
         )
     );

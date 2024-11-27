@@ -1,11 +1,8 @@
 'use client';
-import { use, useEffect, useState, MouseEvent } from 'react';
-import { getFiles } from '@/controllers/files';
+import React, { useState, MouseEvent } from 'react';
 import { Data } from '@/store/types';
 import Folder from '../Folder/Folder';
 import File from '../File/File';
-import AddFile from '../Icons/AddFile';
-import AddFolder from '../Icons/AddFolder';
 import { ROOT_OBJECT } from '@/constants';
 import ActionButtons from '../ActionButtons/ActionButtons';
 
@@ -62,7 +59,10 @@ export default function Sidebar({
     };
 
     return (
-        <div className="p-[20px] border-r-2 border-gray-500 min-w-[300px] max-w-[300px] overflow-auto">
+        <div
+            data-testid={'sidebar'}
+            className="p-[20px] border-r-2 border-gray-500 min-w-[300px] max-w-[300px] overflow-auto"
+        >
             <h1 className="text-xl text-black font-bold">My files</h1>
             <ActionButtons
                 handleAddFile={handleAddFile}
@@ -76,6 +76,7 @@ export default function Sidebar({
                 placeholder="Search"
                 onChange={handleSearch}
                 value={search}
+                data-testid="search"
             />
             {files.length > 0 && <ul>{createStucture()}</ul>}
         </div>

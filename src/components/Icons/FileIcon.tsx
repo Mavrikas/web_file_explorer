@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function FileIcon() {
     return (
         <svg width="18px" height="18px" viewBox="0 0 24 24" fill="#0183c7">

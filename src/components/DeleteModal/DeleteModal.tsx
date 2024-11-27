@@ -1,7 +1,4 @@
-import React, { useState } from 'react';
-import styles from './Modal.module.css';
-import { createPortal } from 'react-dom';
-import CloseIcon from '../Icons/CloseIcon';
+import React from 'react';
 import Modal from '../Modal/Modal';
 import Button from '../Button/Button';
 
@@ -22,6 +19,7 @@ export default function DeleteModal({
             <Modal
                 handleModalVisibility={handleModalVisibility}
                 title={'Warning'}
+                testid="delete-modal"
             >
                 <p className="flex justify-between px-8 mt-[20px]">{text}</p>
                 <div className="flex justify-between px-8 mt-[90px]">

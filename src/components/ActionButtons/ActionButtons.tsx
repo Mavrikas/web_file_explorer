@@ -1,4 +1,4 @@
-import { MouseEvent } from 'react';
+import React, { MouseEvent } from 'react';
 import { Data } from '@/store/types';
 import AddFile from '../Icons/AddFile';
 import AddFolder from '../Icons/AddFolder';
@@ -30,6 +30,7 @@ export default function ActionButtons({
                     onClick={(e) => handleAddFile(e, file)}
                     className="hover:drop-shadow mx-[2px]"
                     name="addFile"
+                    data-testid="addFile"
                 >
                     <AddFile />
                 </button>
@@ -39,6 +40,7 @@ export default function ActionButtons({
                     onClick={(e) => handleAddFolder(e, file)}
                     className="hover:drop-shadow mx-[2px]"
                     name="addFolder"
+                    data-testid="addFolder"
                 >
                     <AddFolder />
                 </button>
@@ -48,6 +50,7 @@ export default function ActionButtons({
                     onClick={(e) => handleDeleteButton(e, file)}
                     className="hover:drop-shadow mr-[2px] ml-[4px]"
                     name="delete"
+                    data-testid="delete"
                 >
                     <Trash />
                 </button>

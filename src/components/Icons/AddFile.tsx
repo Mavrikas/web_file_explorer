@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function AddFile() {
     return (
         <svg fill="#0183c7" width="18px" height="18px" viewBox="0 0 24 24">

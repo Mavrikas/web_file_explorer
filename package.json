@@ -7,29 +7,37 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "api": "nodemon ./api/index.js"
+    "api": "nodemon ./api/index.js",
+    "test": "jest"
   },
   "dependencies": {
-    "axios": "^1.7.7",
-    "express": "^4.21.1",
-    "jodit-react": "^4.1.2",
     "next": "15.0.3",
-    "quill": "^2.0.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "cors": "^2.8.5",
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.25.9",
+    "@babel/preset-typescript": "^7.26.0",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.0.1",
+    "@types/jest": "^29.5.14",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "babel-jest": "^29.7.0",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
-    "nodemon": "^3.1.7",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8",
     "prettier": "3.3.3",
+    "react-test-renderer": "^18.3.1",
     "tailwindcss": "^3.4.1",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

@@ -1,9 +1,6 @@
 'use client';
 import { Data } from '@/store/types';
-import { useState, MouseEvent, useEffect, useMemo } from 'react';
-import Trash from '../Icons/Trash';
-import AddFolder from '../Icons/AddFolder';
-import AddFile from '../Icons/AddFile';
+import React, { useState, MouseEvent } from 'react';
 import ActionButtons from '../ActionButtons/ActionButtons';
 import FolderOpened from '../Icons/FolderOpened';
 import FolderClosed from '../Icons/FolderClosed';
@@ -26,13 +23,17 @@ export default function Folder({
 }: FolderProps) {
     const [isVisible, setIsVisible] = useState(true);
     const [iconsVisible, setIconsVisible] = useState(false);
+
     const handleVisible = (e: MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         setIsVisible(!isVisible);
+        displayFileContent();
     };
+
     const handleOnMouseEnter = () => {
         setIconsVisible(true);
     };
+
     const handleOnMouseLeave = () => {
         setIconsVisible(false);
     };
@@ -40,12 +41,13 @@ export default function Folder({
     return (
         <>
             <span
-                className={`flex flex-row justify-start hover:bg-stone-300 pl-[5px]`}
-                onClick={displayFileContent}
+                data-testid="folder"
+                className={`flex flex-row justify-start hover:bg-stone-300 pl-[5px] `}
                 onMouseEnter={handleOnMouseEnter}
                 onMouseLeave={handleOnMouseLeave}
+                onClick={handleVisible}
             >
-                <button className="mr-[5px]" onClick={handleVisible}>
+                <button className="mr-[5px]">
                     {isVisible ? <FolderOpened /> : <FolderClosed />}
                 </button>
                 <h4

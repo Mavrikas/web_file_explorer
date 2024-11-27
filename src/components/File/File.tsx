@@ -1,9 +1,6 @@
 'use client';
 import { Data } from '@/store/types';
-import { useState, MouseEvent } from 'react';
-import Trash from '../Icons/Trash';
-import AddFolder from '../Icons/AddFolder';
-import AddFile from '../Icons/AddFile';
+import React, { useState, MouseEvent } from 'react';
 import FileIcon from '../Icons/FileIcon';
 import ActionButtons from '../ActionButtons/ActionButtons';
 
@@ -39,6 +36,7 @@ export default function File({
                     {file.name}
                 </h6>
                 <span
+                    data-testid="action-buttons"
                     className={`flex flex-row justify-between ml-[15px] w-[50px] ${iconsVisible ? '' : 'hidden'}`}
                 >
                     <ActionButtons

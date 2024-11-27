@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function Trash() {
     return (
         <svg width="16px" height="16px" viewBox="0 -0.5 21 21" version="1.1">

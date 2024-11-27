@@ -1,11 +1,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import styles from './Modal.module.css';
-import { createPortal } from 'react-dom';
-import CloseIcon from '../Icons/CloseIcon';
 import Modal from '../Modal/Modal';
 import Button from '../Button/Button';
-import { isJson } from '@/utils';
+import { isJson } from '@//utils';
+import { PNG_URL_REGEX } from '@/constants';
+import ErrorMessage from '../ErrorMessage/ErrorMessage';
 
 type AddFileModal = {
     handleModalVisibility: () => void;
@@ -75,10 +74,7 @@ export default function AddFileModal({
             setErrorContent('Invalid JSON');
             hasError = true;
         }
-        if (
-            selected === 'png' &&
-            !contentTrimmed.match(/(https?:\/\/.*\.(?:png))/i)
-        ) {
+        if (selected === 'png' && !contentTrimmed.match(PNG_URL_REGEX)) {
             setErrorContent('Invalid image URL');
             hasError = true;
         }
@@ -105,10 +101,9 @@ export default function AddFileModal({
                         className={`border-2 border-gray-300 rounded-md w-full p-2 ${errorContent && 'border-red-500'}`}
                         value={content}
                         onChange={handleContentChange}
+                        data-testid="image-url"
                     />
-                    {errorContent && (
-                        <p className="text-red-500">{errorContent}</p>
-                    )}
+                    <ErrorMessage errorContent={errorContent} />
                 </>
             );
         } else {
@@ -123,10 +118,9 @@ export default function AddFileModal({
                         className={`border-2 border-gray-300 rounded-md w-full p-2 ${errorContent && 'border-red-500'}`}
                         value={content}
                         onChange={handleContentChange}
+                        data-testid="content"
                     />
-                    {errorContent && (
-                        <p className="text-red-500">{errorContent}</p>
-                    )}
+                    <ErrorMessage errorContent={errorContent} />
                 </>
             );
         }
@@ -137,6 +131,7 @@ export default function AddFileModal({
                 handleModalVisibility={handleModalVisibility}
                 title={title}
                 handleSubmit={() => validateInput(name)}
+                testid="add-file-modal"
             >
                 <fieldset>
                     <legend>Select file type</legend>
@@ -151,6 +146,7 @@ export default function AddFileModal({
                                 value="png"
                                 onChange={handleRadio}
                                 checked={selected === 'png'}
+                                data-testid="png-radio"
                             />
                         </label>
                         <label htmlFor="txt">
@@ -163,6 +159,7 @@ export default function AddFileModal({
                                 value="txt"
                                 onChange={handleRadio}
                                 checked={selected === 'txt'}
+                                data-testid="txt-radio"
                             />
                         </label>
                         <label htmlFor="json">
@@ -175,6 +172,7 @@ export default function AddFileModal({
                                 value="json"
                                 onChange={handleRadio}
                                 checked={selected === 'json'}
+                                data-testid="json-radio"
                             />
                         </label>
                     </div>
@@ -190,8 +188,9 @@ export default function AddFileModal({
                     value={name}
                     onChange={handleInputChange}
                     autoFocus
+                    data-testid="file-name"
                 />
-                {error && <p className="text-red-500">{error}</p>}
+                <ErrorMessage errorContent={error} />
                 {getBody()}
                 <div className="flex justify-between px-8 mt-8">
                     <Button

@@ -1,10 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import styles from './Modal.module.css';
-import { createPortal } from 'react-dom';
-import CloseIcon from '../Icons/CloseIcon';
 import Modal from '../Modal/Modal';
 import Button from '../Button/Button';
+import ErrorMessage from '../ErrorMessage/ErrorMessage';
 
 type AddFolderModal = {
     handleModalVisibility: () => void;
@@ -58,6 +56,7 @@ export default function AddFolderModal({
                 handleModalVisibility={handleModalVisibility}
                 title={title}
                 handleSubmit={() => validateInput(name)}
+                testid="add-folder-modal"
             >
                 <label htmlFor="name" className="mt-[20px]">
                     Folder name
@@ -69,8 +68,10 @@ export default function AddFolderModal({
                     value={name}
                     onChange={handleInputChange}
                     autoFocus
+                    data-testid="folder-name"
                 />
-                {error && <p className="text-red-500">{error}</p>}
+                <ErrorMessage errorContent={error} />
+
                 <div className="flex justify-between px-8 mt-[70px]">
                     <Button
                         text="Confirm"

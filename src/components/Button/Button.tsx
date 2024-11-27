@@ -1,7 +1,7 @@
 import React from 'react';
 
 type ButtonProps = {
-    text?: string;
+    text: string;
     onClick: () => void;
     type: 'primary' | 'secondary';
 };
@@ -14,7 +14,7 @@ export default function Button({ text, onClick, type }: ButtonProps) {
     const classes = type === 'primary' ? PRIMARY_CLASSES : SECONDARY_CLASSES;
 
     return (
-        <button className={classes} onClick={onClick}>
+        <button className={classes} onClick={onClick} data-testid={text}>
             {text}
         </button>
     );

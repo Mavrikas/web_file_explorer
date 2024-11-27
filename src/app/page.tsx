@@ -38,7 +38,6 @@ export default function Home() {
         const tempFiles = structuredClone(fileList);
         const filePathArray = file.path.split('\\');
 
-        // recursive function to find the file and delete it
         const findAndDeleteFile = (files: Data[], pathArray: string[]) => {
             const [currentPath, ...rest] = pathArray;
             const index = files.findIndex((file) => file.name === currentPath);
@@ -52,7 +51,6 @@ export default function Home() {
         };
         findAndDeleteFile(tempFiles, filePathArray);
 
-        // if the file is selected, deselect it
         if (selectedFile) {
             const selectedFilePathArray = selectedFile?.path.split('\\');
             for (const dir of selectedFilePathArray) {
@@ -67,20 +65,9 @@ export default function Home() {
         handleDeleteModalVisibility();
     };
 
-    const handleDeleteButton = (
-        event: MouseEvent<HTMLButtonElement>,
-        file: Data
-    ) => {
-        event.preventDefault();
-        event.stopPropagation();
-        setSelectedFileToDelete(file);
-        handleDeleteModalVisibility();
-    };
-
     const addFolder = (name: string) => {
         const tempFiles = structuredClone(fileList);
 
-        // recursive function to find the folder and add a folder to it
         const findAndAddFolder = (files: Data[], pathArray: string[]) => {
             const [currentPath, ...rest] = pathArray;
             const index = files.findIndex((file) => file.name === currentPath);
@@ -92,9 +79,7 @@ export default function Home() {
                     content: [],
                 });
             } else {
-                // if (Array.isArray(files[index].content)) {
                 findAndAddFolder(files[index].content as Array<Data>, rest);
-                // }
             }
         };
 
@@ -115,7 +100,6 @@ export default function Home() {
     const addFile = (name: string, type: string, content = '') => {
         const tempFiles = structuredClone(fileList);
 
-        // recursive function to find the folder and add a folder to it
         const findAndAddFile = (files: Data[], pathArray: string[]) => {
             const [currentPath, ...rest] = pathArray;
             const index = files.findIndex((file) => file.name === currentPath);
@@ -142,26 +126,6 @@ export default function Home() {
         }
 
         setFileList(tempFiles);
-        handleAddFileModalVisibility();
-    };
-
-    const handleAddFolder = (
-        event: MouseEvent<HTMLButtonElement>,
-        file: Data
-    ) => {
-        event.preventDefault();
-        event.stopPropagation();
-        setSelectedPath(file.path.split('\\'));
-        handleAddFolderModalVisibility();
-    };
-
-    const handleAddFile = (
-        event: MouseEvent<HTMLButtonElement>,
-        file: Data
-    ) => {
-        event.preventDefault();
-        event.stopPropagation();
-        setSelectedPath(file.path.split('\\'));
         handleAddFileModalVisibility();
     };
 
@@ -197,7 +161,6 @@ export default function Home() {
 
     const updateFile = (content: string) => {
         const tempFiles = structuredClone(fileList);
-        // recursive function to find the file and update it
         const findAndUpdateFile = (files: Data[], pathArray: string[]) => {
             const [currentPath, ...rest] = pathArray;
             const index = files.findIndex((file) => file.name === currentPath);
@@ -212,8 +175,37 @@ export default function Home() {
         setSelectedFile({ ...selectedFile, content: content });
     };
 
+    const handleDeleteButton = (
+        event: MouseEvent<HTMLButtonElement>,
+        file: Data
+    ) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setSelectedFileToDelete(file);
+        handleDeleteModalVisibility();
+    };
+
+    const handleAddFolder = (
+        event: MouseEvent<HTMLButtonElement>,
+        file: Data
+    ) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setSelectedPath(file.path.split('\\'));
+        handleAddFolderModalVisibility();
+    };
+
+    const handleAddFile = (
+        event: MouseEvent<HTMLButtonElement>,
+        file: Data
+    ) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setSelectedPath(file.path.split('\\'));
+        handleAddFileModalVisibility();
+    };
+
     useEffect(() => {
-        //get all paths under selected path
         const getPaths = (files: Data[], pathArray: string[]) => {
             const [currentPath, ...rest] = pathArray;
             const index = files.findIndex((file) => file.name === currentPath);
