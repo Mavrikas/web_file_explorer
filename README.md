@@ -71,3 +71,5 @@ Example data :
     },
 ];
 ```
+
+Due to the small size and simplicity of the project, state management tools were not used.
