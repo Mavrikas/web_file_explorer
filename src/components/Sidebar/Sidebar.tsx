@@ -29,12 +29,12 @@ export default function Sidebar({
     };
     const createStucture = () => {
         const createStuctureRecursive = (contents: Data[]) => {
-            return contents.map((item: Data) => {
-                if (typeof item.content !== 'string') {
+            return contents?.map((item: Data) => {
+                if (Array.isArray(item.content)) {
                     return (
                         <Folder
                             file={item}
-                            key={`folder-${item.id}`}
+                            key={`folder-${item.path}`}
                             handleDeleteButton={handleDeleteButton}
                             handleAddFolder={handleAddFolder}
                             handleAddFile={handleAddFile}
@@ -46,7 +46,7 @@ export default function Sidebar({
                 } else {
                     return (
                         <File
-                            key={`file-${item.id}`}
+                            key={`file-${item.path}`}
                             displayFileContent={() => displayFileContent(item)}
                             file={item}
                             handleDeleteButton={handleDeleteButton}

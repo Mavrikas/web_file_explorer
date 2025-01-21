@@ -3,25 +3,32 @@ import FolderOpened from '../Icons/FolderOpened';
 import FileIcon from '../Icons/FileIcon';
 import React, { useEffect, useState } from 'react';
 import Button from '../Button/Button';
-import { isJson } from '@/utils';
+import { getFileType, isJson } from '@/utils';
 import { PNG_URL_REGEX } from '@/constants';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
+import { useSelector } from 'react-redux';
+import { selectedFileSelector } from '@/store/filesSlice';
+import { useAppDispatch } from '@/hooks/rtkHooks';
+import { API_URL } from '@/store/services/api';
 
 type ContentViewerProps = {
-    file: Data;
     updateFile: (content: string) => void;
 };
 
-export default function ContentViewer({
-    file,
-    updateFile,
-}: ContentViewerProps) {
+export default function ContentViewer({ updateFile }: ContentViewerProps) {
     const [isEditing, setIsEditing] = useState(false);
-    const [content, setContent] = useState(file?.content);
+    const [content, setContent] = useState('');
     const [errorContent, setErrorContent] = useState('');
     const [type, setType] = useState('');
+    const selectedFile = useSelector(selectedFileSelector);
+    const dispatch = useAppDispatch();
+
+    const isFolder = selectedFile && Array.isArray(selectedFile.content);
 
     const handleEdit = () => {
+        if (!isEditing) {
+            setContent(selectedFile.content);
+        }
         setIsEditing(!isEditing);
     };
 
@@ -40,8 +47,7 @@ export default function ContentViewer({
                 if (typeof item.content !== 'string') {
                     return (
                         <ul
-                            id={`folder-${item.id}`}
-                            key={`folder-${item.id}`}
+                            key={`folder-${item.path}`}
                             className="list-none pl-[20px]"
                         >
                             <div className="flex flex-row items-center">
@@ -54,8 +60,7 @@ export default function ContentViewer({
                 } else {
                     return (
                         <li
-                            id={`file-${item.id}`}
-                            key={`file-${item.id}`}
+                            key={`file-${item.path}`}
                             className="list-none pl-[20px] flex flex-row items-center"
                         >
                             <FileIcon />
@@ -65,7 +70,7 @@ export default function ContentViewer({
                 }
             });
         };
-        return createStuctureRecursive(file);
+        return createStuctureRecursive(selectedFile.content);
     };
 
     const validateInput = () => {
@@ -74,15 +79,10 @@ export default function ContentViewer({
 
         if (
             contentTrimmed.length > 0 &&
-            type === 'json' &&
+            getFileType(selectedFile.name) === 'json' &&
             !isJson(contentTrimmed)
         ) {
             setErrorContent('Invalid JSON');
-            hasError = true;
-        }
-
-        if (type === 'png' && !contentTrimmed.match(PNG_URL_REGEX)) {
-            setErrorContent('Invalid image URL');
             hasError = true;
         }
 
@@ -92,44 +92,38 @@ export default function ContentViewer({
         }
     };
 
-    useEffect(() => {
-        if (file) {
-            setContent(file.content);
-            setType(file.name.split('.').pop()!);
-            setErrorContent('');
-            setIsEditing(false);
-        }
-    }, [file]);
+    // useEffect(() => {
+    //     if (file) {
+    //         setContent(file.content);
+    //         setType(file.name.split('.').pop()!);
+    //         setErrorContent('');
+    //         setIsEditing(false);
+    //     }
+    // }, [file]);
 
     useEffect(() => {
         if (!isEditing) {
-            setContent(file?.content);
+            // setContent(file?.content);
             setErrorContent('');
         }
-    }, [isEditing, file]);
+    }, [isEditing]);
 
     const displayContent = () => {
-        if (typeof file.content === 'string') {
+        if (!isFolder) {
             let fileDisplay;
-            if (file.name.includes('png')) {
-                fileDisplay = isEditing ? (
-                    <>
-                        <label htmlFor="url" className="mt-4">
-                            Image URL
-                        </label>
-                        <input
-                            type="input"
-                            id={'url'}
-                            className={`border-2 border-gray-300 rounded-md w-full p-2 `}
-                            value={content as string}
-                            onChange={handleContentChange}
-                        />
-                    </>
-                ) : (
-                    <img src={file.content as string} alt={file.name} />
+            if (getFileType(selectedFile.name) === 'png') {
+                fileDisplay = (
+                    <img
+                        src={
+                            API_URL +
+                            '/' +
+                            selectedFile.path.replace('userFiles\\', '')
+                        }
+                        alt={selectedFile.name}
+                    />
                 );
-            } else if (file.name.includes('json')) {
-                fileDisplay = file.content.length ? (
+            } else if (getFileType(selectedFile.name) === 'json') {
+                fileDisplay = selectedFile ? (
                     isEditing ? (
                         <textarea
                             className="w-full h-[400px] resize-none"
@@ -137,9 +131,10 @@ export default function ContentViewer({
                             value={`${content}`}
                         ></textarea>
                     ) : (
+                        //handle bad json
                         <pre>
                             {JSON.stringify(
-                                JSON.parse(file.content as string),
+                                JSON.parse(selectedFile.content as string),
                                 null,
                                 2
                             )}
@@ -154,7 +149,7 @@ export default function ContentViewer({
                         className="w-full h-[400px] resize-none"
                     />
                 ) : (
-                    <p>{file.content as string}</p>
+                    <p>{selectedFile.content as string}</p>
                 );
             }
             return (
@@ -173,20 +168,20 @@ export default function ContentViewer({
     };
 
     return (
-        file && (
+        selectedFile?.content && (
             <div className="p-[20px] w-full">
                 <h1 className="text-sky-600 text-lg flex flex-row items-center">
                     <span className="pr-[10px]">
-                        {Array.isArray(file.content) ? (
+                        {Array.isArray(selectedFile.content) ? (
                             <FolderOpened />
                         ) : (
                             <FileIcon />
                         )}
                     </span>
-                    {file.path}
+                    {selectedFile.path}
                 </h1>
 
-                {typeof file.content === 'string' && (
+                {!isFolder && !selectedFile.name.includes('png') && (
                     <div className="flex justify-between  mt-[20px] mb-[5px] w-[200px]">
                         {isEditing ? (
                             <>
