@@ -6,3 +6,7 @@ export const isJson = (str: string) => {
     }
     return true;
 };
+
+export const getFileType = (name: string) => {
+    return name.split('.').pop()!;
+};

@@ -5,36 +5,64 @@ import Folder from '../Folder/Folder';
 import File from '../File/File';
 import { ROOT_OBJECT } from '@/constants';
 import ActionButtons from '../ActionButtons/ActionButtons';
+import { useAppSelector } from '@/hooks/rtkHooks';
+import { filesSelector } from '@/store/filesSlice';
 
 type SidebarProps = {
-    files: Data[];
     displayFileContent: (a: Data) => void;
     handleDeleteButton: (e: MouseEvent<HTMLButtonElement>, a: Data) => void;
     handleAddFolder: (e: MouseEvent<HTMLButtonElement>, a: Data) => void;
     handleAddFile: (e: MouseEvent<HTMLButtonElement>, a: Data) => void;
-    searchList: (a: string) => void;
 };
 export default function Sidebar({
-    files,
     displayFileContent,
     handleDeleteButton,
     handleAddFolder,
     handleAddFile,
-    searchList,
 }: SidebarProps) {
     const [search, setSearch] = useState('');
+    const fileList = useAppSelector(filesSelector);
+
+    const searchList = (search: string, list: Data[]) => {
+        const filterFiles = (files: Data[]): Data[] => {
+            return files.reduce((acc: Data[], file) => {
+                if (file.name.toLowerCase().includes(search.toLowerCase())) {
+                    acc.push(file);
+                    if (Array.isArray(file.content)) {
+                        acc.pop();
+                        const filteredContent = filterFiles(file.content);
+                        acc.push({
+                            ...file,
+                            content: filteredContent,
+                        });
+                    }
+                } else if (Array.isArray(file.content)) {
+                    const filteredContent = filterFiles(file.content);
+                    if (filteredContent.length > 0) {
+                        acc.push({
+                            ...file,
+                            content: filteredContent,
+                        });
+                    }
+                }
+                return acc;
+            }, []);
+        };
+        return filterFiles(list);
+    };
+
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
-        searchList(e.target.value);
     };
+
     const createStucture = () => {
         const createStuctureRecursive = (contents: Data[]) => {
-            return contents.map((item: Data) => {
-                if (typeof item.content !== 'string') {
+            return contents?.map((item: Data) => {
+                if (Array.isArray(item.content)) {
                     return (
                         <Folder
                             file={item}
-                            key={`folder-${item.id}`}
+                            key={`folder-${item.path}`}
                             handleDeleteButton={handleDeleteButton}
                             handleAddFolder={handleAddFolder}
                             handleAddFile={handleAddFile}
@@ -46,7 +74,7 @@ export default function Sidebar({
                 } else {
                     return (
                         <File
-                            key={`file-${item.id}`}
+                            key={`file-${item.path}`}
                             displayFileContent={() => displayFileContent(item)}
                             file={item}
                             handleDeleteButton={handleDeleteButton}
@@ -55,7 +83,7 @@ export default function Sidebar({
                 }
             });
         };
-        return createStuctureRecursive(files);
+        return createStuctureRecursive(searchList(search, fileList));
     };
 
     return (
@@ -78,7 +106,7 @@ export default function Sidebar({
                 value={search}
                 data-testid="search"
             />
-            {files.length > 0 && <ul>{createStucture()}</ul>}
+            {fileList.length > 0 && <ul>{createStucture()}</ul>}
         </div>
     );
 }
