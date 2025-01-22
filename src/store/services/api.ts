@@ -15,7 +15,7 @@ export const getFilesCall = () => {
 
 export const getFileContentCall = (path: string) => {
     return axios
-        .get(API_URL + '/files/' + path)
+        .get(API_URL + '/file/' + path)
         .then((response) => {
             console.log(response.data);
             return response.data;

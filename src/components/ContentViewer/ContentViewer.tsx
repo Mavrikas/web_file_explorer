@@ -4,11 +4,9 @@ import FileIcon from '../Icons/FileIcon';
 import React, { useEffect, useState } from 'react';
 import Button from '../Button/Button';
 import { getFileType, isJson } from '@/utils';
-import { PNG_URL_REGEX } from '@/constants';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import { useSelector } from 'react-redux';
 import { selectedFileSelector } from '@/store/filesSlice';
-import { useAppDispatch } from '@/hooks/rtkHooks';
 import { API_URL } from '@/store/services/api';
 
 type ContentViewerProps = {
@@ -19,9 +17,7 @@ export default function ContentViewer({ updateFile }: ContentViewerProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [content, setContent] = useState('');
     const [errorContent, setErrorContent] = useState('');
-    const [type, setType] = useState('');
     const selectedFile = useSelector(selectedFileSelector);
-    const dispatch = useAppDispatch();
 
     const isFolder = selectedFile && Array.isArray(selectedFile.content);
 
@@ -103,7 +99,6 @@ export default function ContentViewer({ updateFile }: ContentViewerProps) {
 
     useEffect(() => {
         if (!isEditing) {
-            // setContent(file?.content);
             setErrorContent('');
         }
     }, [isEditing]);
@@ -123,24 +118,29 @@ export default function ContentViewer({ updateFile }: ContentViewerProps) {
                     />
                 );
             } else if (getFileType(selectedFile.name) === 'json') {
-                fileDisplay = selectedFile ? (
-                    isEditing ? (
+                if (isEditing) {
+                    fileDisplay = (
                         <textarea
                             className="w-full h-[400px] resize-none"
                             onChange={handleContentChange}
                             value={`${content}`}
                         ></textarea>
-                    ) : (
-                        //handle bad json
-                        <pre>
-                            {JSON.stringify(
-                                JSON.parse(selectedFile.content as string),
-                                null,
-                                2
-                            )}
-                        </pre>
-                    )
-                ) : null;
+                    );
+                } else {
+                    if (isJson(selectedFile.content as string)) {
+                        fileDisplay = (
+                            <pre>
+                                {JSON.stringify(
+                                    JSON.parse(selectedFile.content as string),
+                                    null,
+                                    2
+                                )}
+                            </pre>
+                        );
+                    } else {
+                        fileDisplay = 'Invalid JSON';
+                    }
+                }
             } else {
                 fileDisplay = isEditing ? (
                     <textarea
@@ -168,7 +168,7 @@ export default function ContentViewer({ updateFile }: ContentViewerProps) {
     };
 
     return (
-        selectedFile?.content && (
+        selectedFile?.content != null && (
             <div className="p-[20px] w-full">
                 <h1 className="text-sky-600 text-lg flex flex-row items-center">
                     <span className="pr-[10px]">

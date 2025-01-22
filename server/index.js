@@ -43,7 +43,7 @@ app.get('/files', async (req, res) => {
     res.send(JSON.stringify(buildDirectoryStructure(userDir), null, 2));
 });
 
-app.get('/files/:path', async (req, res) => {
+app.get('/file/:path', async (req, res) => {
     const filePath = path.join(__dirname, ...req.params.path.split('-'));
     fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {

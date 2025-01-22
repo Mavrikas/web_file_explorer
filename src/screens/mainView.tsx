@@ -91,36 +91,6 @@ export default function MainView() {
         handleAddFileModalVisibility();
     };
 
-    const searchList = (search: string) => {
-        const filterFiles = (files: Data[]): Data[] => {
-            return files.reduce((acc: Data[], file) => {
-                if (file.name.toLowerCase().includes(search.toLowerCase())) {
-                    acc.push(file);
-                    if (Array.isArray(file.content)) {
-                        acc.pop();
-                        const filteredContent = filterFiles(file.content);
-                        if (filteredContent.length > 0) {
-                            acc.push({
-                                ...file,
-                                content: filteredContent,
-                            });
-                        }
-                    }
-                } else if (Array.isArray(file.content)) {
-                    const filteredContent = filterFiles(file.content);
-                    if (filteredContent.length > 0) {
-                        acc.push({
-                            ...file,
-                            content: filteredContent,
-                        });
-                    }
-                }
-                return acc;
-            }, []);
-        };
-        setFileList(filterFiles(dummyDataClone));
-    };
-
     const updateFile = async (content: string) => {
         await dispatch(
             updateFileContent({
@@ -197,12 +167,10 @@ export default function MainView() {
         <>
             <div className="flex flex-row min-h-screen font-[family-name:var(--font-geist-sans)]">
                 <Sidebar
-                    files={fileList}
                     displayFileContent={handleFileSelect}
                     handleDeleteButton={handleDeleteButton}
                     handleAddFolder={handleAddFolder}
                     handleAddFile={handleAddFile}
-                    searchList={searchList}
                 />
                 {!isLoading ? (
                     <ContentViewer updateFile={updateFile} />
