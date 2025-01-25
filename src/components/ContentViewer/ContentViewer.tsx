@@ -1,38 +1,19 @@
+import React from 'react';
 import { Data } from '@/store/types';
 import FolderOpened from '../Icons/FolderOpened';
 import FileIcon from '../Icons/FileIcon';
-import React, { useEffect, useState } from 'react';
-import Button from '../Button/Button';
-import { getFileType, isJson } from '@/utils';
-import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import { useSelector } from 'react-redux';
 import { selectedFileSelector } from '@/store/filesSlice';
-import { API_URL } from '@/store/services/api';
+import FileDisplay from './FileDisplay/FileDisplay';
 
 type ContentViewerProps = {
     updateFile: (content: string) => void;
 };
 
 export default function ContentViewer({ updateFile }: ContentViewerProps) {
-    const [isEditing, setIsEditing] = useState(false);
-    const [content, setContent] = useState('');
-    const [errorContent, setErrorContent] = useState('');
     const selectedFile = useSelector(selectedFileSelector);
 
     const isFolder = selectedFile && Array.isArray(selectedFile.content);
-
-    const handleEdit = () => {
-        if (!isEditing) {
-            setContent(selectedFile.content);
-        }
-        setIsEditing(!isEditing);
-    };
-
-    const handleContentChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        setContent(e.target.value);
-    };
 
     const createStucture = () => {
         const createStuctureRecursive = (contents: Data[] | Data) => {
@@ -69,99 +50,9 @@ export default function ContentViewer({ updateFile }: ContentViewerProps) {
         return createStuctureRecursive(selectedFile.content);
     };
 
-    const validateInput = () => {
-        let hasError = false;
-        const contentTrimmed = (content as string).trim();
-
-        if (
-            contentTrimmed.length > 0 &&
-            getFileType(selectedFile.name) === 'json' &&
-            !isJson(contentTrimmed)
-        ) {
-            setErrorContent('Invalid JSON');
-            hasError = true;
-        }
-
-        if (!hasError) {
-            updateFile(contentTrimmed);
-            setIsEditing(false);
-        }
-    };
-
-    // useEffect(() => {
-    //     if (file) {
-    //         setContent(file.content);
-    //         setType(file.name.split('.').pop()!);
-    //         setErrorContent('');
-    //         setIsEditing(false);
-    //     }
-    // }, [file]);
-
-    useEffect(() => {
-        if (!isEditing) {
-            setErrorContent('');
-        }
-    }, [isEditing]);
-
     const displayContent = () => {
         if (!isFolder) {
-            let fileDisplay;
-            if (getFileType(selectedFile.name) === 'png') {
-                fileDisplay = (
-                    <img
-                        src={
-                            API_URL +
-                            '/' +
-                            selectedFile.path.replace('userFiles\\', '')
-                        }
-                        alt={selectedFile.name}
-                    />
-                );
-            } else if (getFileType(selectedFile.name) === 'json') {
-                if (isEditing) {
-                    fileDisplay = (
-                        <textarea
-                            className="w-full h-[400px] resize-none"
-                            onChange={handleContentChange}
-                            value={`${content}`}
-                        ></textarea>
-                    );
-                } else {
-                    if (isJson(selectedFile.content as string)) {
-                        fileDisplay = (
-                            <pre>
-                                {JSON.stringify(
-                                    JSON.parse(selectedFile.content as string),
-                                    null,
-                                    2
-                                )}
-                            </pre>
-                        );
-                    } else {
-                        fileDisplay = 'Invalid JSON';
-                    }
-                }
-            } else {
-                fileDisplay = isEditing ? (
-                    <textarea
-                        value={content as string}
-                        onChange={handleContentChange}
-                        className="w-full h-[400px] resize-none"
-                    />
-                ) : (
-                    <p>{selectedFile.content as string}</p>
-                );
-            }
-            return (
-                <>
-                    <div
-                        className={`border-2 border-gray-500 min-w-[500px] min-h-[400px] w-9/12 p-[3px] bg-white overflow-auto ${errorContent && 'border-red-500'}`}
-                    >
-                        {fileDisplay}
-                    </div>
-                    <ErrorMessage errorContent={errorContent} />
-                </>
-            );
+            return <FileDisplay updateFile={updateFile} />;
         } else {
             return createStucture();
         }
@@ -180,31 +71,6 @@ export default function ContentViewer({ updateFile }: ContentViewerProps) {
                     </span>
                     {selectedFile.path}
                 </h1>
-
-                {!isFolder && !selectedFile.name.includes('png') && (
-                    <div className="flex justify-between  mt-[20px] mb-[5px] w-[200px]">
-                        {isEditing ? (
-                            <>
-                                <Button
-                                    text="Save"
-                                    onClick={() => validateInput()}
-                                    type="primary"
-                                />
-                                <Button
-                                    text="Cancel"
-                                    onClick={handleEdit}
-                                    type="secondary"
-                                />
-                            </>
-                        ) : (
-                            <Button
-                                text="Edit"
-                                onClick={() => handleEdit()}
-                                type="primary"
-                            />
-                        )}
-                    </div>
-                )}
 
                 {displayContent()}
             </div>
