@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, MouseEvent } from 'react';
-import { Data } from '@/store/types';
+import { Data, FolderType } from '@/store/types';
 import Folder from '../Folder/Folder';
 import File from '../File/File';
 import { ROOT_OBJECT } from '@/constants';
@@ -11,14 +11,16 @@ import { filesSelector } from '@/store/filesSlice';
 type SidebarProps = {
     displayFileContent: (a: Data) => void;
     handleDeleteButton: (e: MouseEvent<HTMLButtonElement>, a: Data) => void;
-    handleAddFolder: (e: MouseEvent<HTMLButtonElement>, a: Data) => void;
-    handleAddFile: (e: MouseEvent<HTMLButtonElement>, a: Data) => void;
+    handleCreate: (
+        e: MouseEvent<HTMLButtonElement>,
+        a: Data,
+        type?: FolderType
+    ) => void;
 };
 export default function Sidebar({
     displayFileContent,
     handleDeleteButton,
-    handleAddFolder,
-    handleAddFile,
+    handleCreate,
 }: SidebarProps) {
     const [search, setSearch] = useState('');
     const fileList = useAppSelector(filesSelector);
@@ -64,8 +66,7 @@ export default function Sidebar({
                             file={item}
                             key={`folder-${item.path}`}
                             handleDeleteButton={handleDeleteButton}
-                            handleAddFolder={handleAddFolder}
-                            handleAddFile={handleAddFile}
+                            handleCreate={handleCreate}
                             displayFileContent={() => displayFileContent(item)}
                         >
                             {createStuctureRecursive(item.content)}
@@ -93,8 +94,7 @@ export default function Sidebar({
         >
             <h1 className="text-xl text-black font-bold">My files</h1>
             <ActionButtons
-                handleAddFile={handleAddFile}
-                handleAddFolder={handleAddFolder}
+                handleCreate={handleCreate}
                 file={ROOT_OBJECT}
                 extraClasses="mb-[10px] w-[260px]"
             />

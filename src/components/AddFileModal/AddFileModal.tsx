@@ -5,14 +5,14 @@ import Button from '../Button/Button';
 import { isJson } from '@//utils';
 import { PNG_URL_REGEX } from '@/constants';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
+import { Data, FileTypes } from '@/store/types';
 
 type AddFileModal = {
     handleModalVisibility: () => void;
     isOpen: boolean;
     title: string;
-    pathsArray: string[];
-    selectedPath: string[];
-    confirmBtn: (name: string, selected: string, content?: string) => void;
+    pathsArray: Data[];
+    confirmBtn: (name: string, selected: FileTypes, content?: string) => void;
 };
 export default function AddFileModal({
     handleModalVisibility,
@@ -20,9 +20,8 @@ export default function AddFileModal({
     title,
     confirmBtn,
     pathsArray,
-    selectedPath,
 }: AddFileModal) {
-    const [selected, setSelected] = useState('txt');
+    const [selected, setSelected] = useState<FileTypes>('txt');
     const [name, setName] = useState('');
     const [content, setContent] = useState('');
     const [error, setError] = useState('');
@@ -48,21 +47,20 @@ export default function AddFileModal({
     };
     const handleRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
         resetInput();
-        setSelected(e.target.value);
+        setSelected(e.target.value as FileTypes);
     };
 
     const validateInput = (name: string) => {
         let hasError = false;
         const nameTrimmed = name.trim();
         const contentTrimmed = content.trim();
-        const path =
-            selectedPath.join('\\') === ''
-                ? `${nameTrimmed}.${selected}`
-                : `${selectedPath.join('\\')}\\${nameTrimmed}.${selected}`;
+
         if (nameTrimmed === '') {
             hasError = true;
             setError('File name cannot be empty');
-        } else if (pathsArray.includes(path)) {
+        } else if (
+            pathsArray.some((el) => el.name === `${nameTrimmed}.${selected}`)
+        ) {
             hasError = true;
             setError('File already exists');
         }

@@ -1,5 +1,5 @@
 'use client';
-import { Data } from '@/store/types';
+import { Data, FolderType } from '@/store/types';
 import React, { useState, MouseEvent } from 'react';
 import ActionButtons from '../ActionButtons/ActionButtons';
 import FolderOpened from '../Icons/FolderOpened';
@@ -9,16 +9,18 @@ type FolderProps = {
     file: Data;
     children: React.ReactNode;
     handleDeleteButton: (e: MouseEvent<HTMLButtonElement>, a: Data) => void;
-    handleAddFolder: (e: MouseEvent<HTMLButtonElement>, a: Data) => void;
-    handleAddFile: (e: MouseEvent<HTMLButtonElement>, a: Data) => void;
+    handleCreate: (
+        e: MouseEvent<HTMLButtonElement>,
+        a: Data,
+        type?: FolderType
+    ) => void;
     displayFileContent: () => void;
 };
 export default function Folder({
     file,
     children,
     handleDeleteButton,
-    handleAddFolder,
-    handleAddFile,
+    handleCreate,
     displayFileContent,
 }: FolderProps) {
     const [isVisible, setIsVisible] = useState(true);
@@ -56,8 +58,7 @@ export default function Folder({
                     {file.name}
                 </h4>
                 <ActionButtons
-                    handleAddFile={handleAddFile}
-                    handleAddFolder={handleAddFolder}
+                    handleCreate={handleCreate}
                     handleDeleteButton={handleDeleteButton}
                     iconsVisible={iconsVisible}
                     file={file}

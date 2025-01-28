@@ -14,7 +14,7 @@ describe('ActionButtons', () => {
     test('renders add file button and triggers handleAddFile', () => {
         const handleAddFile = jest.fn();
         const { getByTestId } = render(
-            <ActionButtons handleAddFile={handleAddFile} file={mockFile} />
+            <ActionButtons handleCreate={handleAddFile} file={mockFile} />
         );
 
         const addFileButton = getByTestId('addFile');

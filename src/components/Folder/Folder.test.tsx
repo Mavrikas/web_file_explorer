@@ -20,7 +20,7 @@ describe('Folder Component', () => {
             <Folder
                 file={mockFile}
                 handleDeleteButton={mockHandleDeleteButton}
-                handleAddFolder={mockHandleAddFolder}
+                handleCreate={mockHandleAddFolder}
                 handleAddFile={mockHandleAddFile}
                 displayFileContent={mockDisplayFileContent}
             >

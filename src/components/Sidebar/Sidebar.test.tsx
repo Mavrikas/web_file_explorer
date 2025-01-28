@@ -33,7 +33,7 @@ describe('Sidebar Component', () => {
                 displayFileContent={mockDisplayFileContent}
                 handleDeleteButton={mockHandleDeleteButton}
                 handleAddFolder={mockHandleAddFolder}
-                handleAddFile={mockHandleAddFile}
+                handleCreate={mockHandleAddFile}
                 searchList={mockSearchList}
             />
         );

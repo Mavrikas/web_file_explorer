@@ -19,7 +19,7 @@ export const fetchFilesList = createAsyncThunk(
         try {
             return await getFilesCall();
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 );
@@ -30,7 +30,7 @@ export const fetchFileContent = createAsyncThunk(
         try {
             return await getFileContentCall(path);
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 );
@@ -41,7 +41,7 @@ export const updateFileContent = createAsyncThunk(
         try {
             return await updateFileCall(path, content);
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 );
@@ -57,12 +57,12 @@ export const createNewFile = createAsyncThunk(
         path: string;
         type: string;
         name: string;
-        content?: string;
+        content?: string | [];
     }) => {
         try {
             return await createFileCall(path, type, name, content);
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 );
@@ -72,7 +72,7 @@ export const deleteFile = createAsyncThunk(
         try {
             return await deleteFileCall(path);
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 );

@@ -1,12 +1,15 @@
 import React, { MouseEvent } from 'react';
-import { Data } from '@/store/types';
+import { Data, FolderType } from '@/store/types';
 import AddFile from '../Icons/AddFile';
 import AddFolder from '../Icons/AddFolder';
 import Trash from '../Icons/Trash';
 
 type ActionButtonsProps = {
-    handleAddFile?: (e: MouseEvent<HTMLButtonElement>, a: Data) => void;
-    handleAddFolder?: (e: MouseEvent<HTMLButtonElement>, a: Data) => void;
+    handleCreate?: (
+        e: MouseEvent<HTMLButtonElement>,
+        a: Data,
+        type?: FolderType
+    ) => void;
     handleDeleteButton?: (e: MouseEvent<HTMLButtonElement>, a: Data) => void;
     file: Data;
     iconsVisible?: boolean;
@@ -14,8 +17,7 @@ type ActionButtonsProps = {
 };
 
 export default function ActionButtons({
-    handleAddFile,
-    handleAddFolder,
+    handleCreate,
     handleDeleteButton,
     file,
     iconsVisible = true,
@@ -25,9 +27,9 @@ export default function ActionButtons({
         <span
             className={`flex flex-row justify-end ${extraClasses} ${iconsVisible ? '' : 'hidden'}`}
         >
-            {handleAddFile && (
+            {handleCreate && (
                 <button
-                    onClick={(e) => handleAddFile(e, file)}
+                    onClick={(e) => handleCreate(e, file)}
                     className="hover:drop-shadow mx-[2px]"
                     name="addFile"
                     data-testid="addFile"
@@ -35,9 +37,9 @@ export default function ActionButtons({
                     <AddFile />
                 </button>
             )}
-            {handleAddFolder && (
+            {handleCreate && (
                 <button
-                    onClick={(e) => handleAddFolder(e, file)}
+                    onClick={(e) => handleCreate(e, file, 'folder')}
                     className="hover:drop-shadow mx-[2px]"
                     name="addFolder"
                     data-testid="addFolder"

@@ -3,14 +3,14 @@ import React, { useEffect, useState } from 'react';
 import Modal from '../Modal/Modal';
 import Button from '../Button/Button';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
+import { CreateItemTypes, Data, FolderType } from '@/store/types';
 
 type AddFolderModal = {
     handleModalVisibility: () => void;
     isOpen: boolean;
     title: string;
-    pathsArray: string[];
-    selectedPath: string[];
-    confirmBtn: (name: string) => void;
+    pathsArray: Data[];
+    confirmBtn: (name: string, type: FolderType, content: []) => void;
 };
 export default function AddFolderModal({
     handleModalVisibility,
@@ -18,7 +18,6 @@ export default function AddFolderModal({
     title,
     confirmBtn,
     pathsArray,
-    selectedPath,
 }: AddFolderModal) {
     const [name, setName] = useState('');
     const [error, setError] = useState('');
@@ -37,16 +36,13 @@ export default function AddFolderModal({
 
     const validateInput = (name: string) => {
         const nameTrimmed = name.trim();
-        const path =
-            selectedPath.join('\\') === ''
-                ? nameTrimmed
-                : `${selectedPath.join('\\')}\\${nameTrimmed}`;
+
         if (nameTrimmed === '') {
             setError('Folder name cannot be empty');
-        } else if (pathsArray.includes(path)) {
+        } else if (pathsArray.some((el) => el.name === nameTrimmed)) {
             setError('Folder already exists');
         } else {
-            confirmBtn(nameTrimmed);
+            confirmBtn(nameTrimmed, 'folder', []);
         }
     };
 

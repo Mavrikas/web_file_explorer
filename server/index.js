@@ -39,6 +39,12 @@ function buildDirectoryStructure(dirPath) {
     return readDirectory(dirPath);
 }
 
+function createInitialDirectory() {
+    if (!fs.existsSync(userDir)) {
+        fs.mkdirSync(userDir);
+    }
+}
+
 app.get('/files', async (req, res) => {
     res.send(JSON.stringify(buildDirectoryStructure(userDir), null, 2));
 });
@@ -77,11 +83,14 @@ app.put('/file/', async (req, res) => {
 });
 
 app.post('/file/', async (req, res) => {
-    const filePath = path.join(
+    let filePath = path.join(
         __dirname,
         ...req.body.path.split('-'),
         req.body.name
     );
+    if (req.body.path === '') {
+        filePath = path.join(userDir, req.body.name);
+    }
     const type = req.body.type;
     if (type === 'folder') {
         fs.mkdir(filePath, { recursive: true }, (err) => {
@@ -107,7 +116,6 @@ app.post('/file/', async (req, res) => {
 });
 
 app.delete('/file/', async (req, res) => {
-    console.log(req.body);
     const filePath = path.join(__dirname, ...req.body.path.split('-'));
     fs.rm(filePath, { recursive: true }, (err) => {
         if (err) {
@@ -120,4 +128,5 @@ app.delete('/file/', async (req, res) => {
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
+    createInitialDirectory();
 });
