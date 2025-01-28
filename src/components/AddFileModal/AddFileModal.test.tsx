@@ -5,8 +5,14 @@ import AddFileModal from './AddFileModal';
 describe('AddFileModal', () => {
     const handleModalVisibility = jest.fn();
     const confirmBtn = jest.fn();
-    const pathsArray = ['existingFile.txt'];
-    const selectedPath: string[] = [];
+    const pathsArray = [
+        {
+            id: '1',
+            name: 'existingFile.txt',
+            path: '/path/to/existingFile.txt',
+            content: 'file content',
+        },
+    ];
 
     const renderComponent = (isOpen: boolean) => {
         render(
@@ -16,7 +22,6 @@ describe('AddFileModal', () => {
                 title="Add File"
                 confirmBtn={confirmBtn}
                 pathsArray={pathsArray}
-                selectedPath={selectedPath}
             />
         );
     };

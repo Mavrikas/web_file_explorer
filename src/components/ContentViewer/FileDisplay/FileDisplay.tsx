@@ -1,3 +1,4 @@
+import React from 'react';
 import Button from '@/components/Button/Button';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import { selectedFileSelector } from '@/store/filesSlice';

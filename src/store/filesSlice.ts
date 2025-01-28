@@ -108,3 +108,5 @@ export const { setSelectedFile } = filesSlice.actions;
 export const loadingSelector = (state: any) => state.files.loading;
 export const filesSelector = (state: any) => state.files.files;
 export const selectedFileSelector = (state: any) => state.files.selectedFile;
+
+export default filesSlice.reducer;

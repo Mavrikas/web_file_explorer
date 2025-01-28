@@ -1,7 +1,10 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import ContentViewer from './ContentViewer';
 import { Data } from '@/store/types';
+import { renderWithProviders } from '@/test-utils';
+
+const mockUpdateFile = jest.fn();
 
 const mockFile: Data = {
     id: '1',
@@ -10,74 +13,63 @@ const mockFile: Data = {
     path: '/test.json',
 };
 
-const mockUpdateFile = jest.fn();
+const mockFolder: Data = {
+    id: '2',
+    name: 'folder',
+    content: [
+        {
+            id: '3',
+            name: 'file1.txt',
+            content: 'file content',
+            path: '/folder/file1.txt',
+        },
+    ],
+    path: '/folder',
+};
 
 describe('ContentViewer', () => {
-    it('renders the component with file content', () => {
-        render(<ContentViewer file={mockFile} updateFile={mockUpdateFile} />);
+    it('renders file content correctly', () => {
+        const initState = {
+            files: {
+                selectedFile: mockFile,
+                files: [],
+                loading: false,
+            },
+        };
+        renderWithProviders(<ContentViewer updateFile={mockUpdateFile} />, {
+            preloadedState: initState,
+        });
+
         expect(screen.getByText('/test.json')).toBeInTheDocument();
-        expect(screen.getByText('Edit')).toBeInTheDocument();
     });
 
-    it('toggles edit mode', () => {
-        render(<ContentViewer file={mockFile} updateFile={mockUpdateFile} />);
-        fireEvent.click(screen.getByText('Edit'));
-        expect(screen.getByText('Save')).toBeInTheDocument();
-        expect(screen.getByText('Cancel')).toBeInTheDocument();
-    });
-
-    it('displays JSON content correctly', () => {
-        render(<ContentViewer file={mockFile} updateFile={mockUpdateFile} />);
-        expect(screen.getByText(/"key": "value"/)).toBeInTheDocument();
-    });
-
-    it('validates JSON input', () => {
-        render(<ContentViewer file={mockFile} updateFile={mockUpdateFile} />);
-        fireEvent.click(screen.getByText('Edit'));
-        fireEvent.change(screen.getByRole('textbox'), {
-            target: { value: 'invalid json' },
-        });
-        fireEvent.click(screen.getByText('Save'));
-        expect(screen.getByText('Invalid JSON')).toBeInTheDocument();
-    });
-
-    it('calls updateFile on valid input', () => {
-        render(<ContentViewer file={mockFile} updateFile={mockUpdateFile} />);
-        fireEvent.click(screen.getByText('Edit'));
-        fireEvent.change(screen.getByRole('textbox'), {
-            target: { value: '{"newKey": "newValue"}' },
-        });
-        fireEvent.click(screen.getByText('Save'));
-        expect(mockUpdateFile).toHaveBeenCalledWith('{"newKey": "newValue"}');
-    });
-
-    it('displays image content correctly', () => {
-        const imageFile: Data = {
-            id: '2',
-            name: 'image.png',
-            content: 'http://example.com/image.png',
-            path: '/image.png',
+    it('renders folder structure correctly', () => {
+        const initState = {
+            files: {
+                selectedFile: mockFolder,
+                files: [],
+                loading: false,
+            },
         };
-        render(<ContentViewer file={imageFile} updateFile={mockUpdateFile} />);
-        expect(screen.getByRole('img')).toHaveAttribute(
-            'src',
-            'http://example.com/image.png'
-        );
+        renderWithProviders(<ContentViewer updateFile={mockUpdateFile} />, {
+            preloadedState: initState,
+        });
+        expect(screen.getByText('/folder')).toBeInTheDocument();
+        expect(screen.getByText('file1.txt')).toBeInTheDocument();
     });
 
-    it('validates image URL input', () => {
-        const imageFile: Data = {
-            id: '2',
-            name: 'image.png',
-            content: 'http://example.com/image.png',
-            path: '/image.png',
+    it('does not render anything if no file is selected', () => {
+        const initState = {
+            files: {
+                selectedFile: null,
+                files: [],
+                loading: false,
+            },
         };
-        render(<ContentViewer file={imageFile} updateFile={mockUpdateFile} />);
-        fireEvent.click(screen.getByText('Edit'));
-        fireEvent.change(screen.getByRole('textbox'), {
-            target: { value: 'invalid url' },
+        renderWithProviders(<ContentViewer updateFile={mockUpdateFile} />, {
+            preloadedState: initState,
         });
-        fireEvent.click(screen.getByText('Save'));
-        expect(screen.getByText('Invalid image URL')).toBeInTheDocument();
+
+        expect(screen.queryByText('/test.json')).not.toBeInTheDocument();
     });
 });

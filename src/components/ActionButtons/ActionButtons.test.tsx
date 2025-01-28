@@ -11,35 +11,33 @@ describe('ActionButtons', () => {
         content: 'testContent',
     };
 
-    test('renders add file button and triggers handleAddFile', () => {
-        const handleAddFile = jest.fn();
+    test('renders add file button and triggers handleCreate for file', () => {
+        const handleCreate = jest.fn();
         const { getByTestId } = render(
-            <ActionButtons handleCreate={handleAddFile} file={mockFile} />
+            <ActionButtons handleCreate={handleCreate} file={mockFile} />
         );
 
         const addFileButton = getByTestId('addFile');
         expect(addFileButton).toBeInTheDocument();
 
         fireEvent.click(addFileButton);
-        expect(handleAddFile).toHaveBeenCalledWith(
-            expect.any(Object),
-            mockFile
-        );
+        expect(handleCreate).toHaveBeenCalledWith(expect.any(Object), mockFile);
     });
 
-    test('renders add folder button and triggers handleAddFolder', () => {
-        const handleAddFolder = jest.fn();
+    test('renders add folder button and triggers handleCreate for folder', () => {
+        const handleCreate = jest.fn();
         const { getByTestId } = render(
-            <ActionButtons handleAddFolder={handleAddFolder} file={mockFile} />
+            <ActionButtons handleCreate={handleCreate} file={mockFile} />
         );
 
         const addFolderButton = getByTestId('addFolder');
         expect(addFolderButton).toBeInTheDocument();
 
         fireEvent.click(addFolderButton);
-        expect(handleAddFolder).toHaveBeenCalledWith(
+        expect(handleCreate).toHaveBeenCalledWith(
             expect.any(Object),
-            mockFile
+            mockFile,
+            'folder'
         );
     });
 

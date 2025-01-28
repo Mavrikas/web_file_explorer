@@ -11,8 +11,7 @@ describe('Folder Component', () => {
         content: [],
     };
     const mockHandleDeleteButton = jest.fn();
-    const mockHandleAddFolder = jest.fn();
-    const mockHandleAddFile = jest.fn();
+    const mockHandleAddItem = jest.fn();
     const mockDisplayFileContent = jest.fn();
 
     const renderComponent = () =>
@@ -20,8 +19,7 @@ describe('Folder Component', () => {
             <Folder
                 file={mockFile}
                 handleDeleteButton={mockHandleDeleteButton}
-                handleCreate={mockHandleAddFolder}
-                handleAddFile={mockHandleAddFile}
+                handleCreate={mockHandleAddItem}
                 displayFileContent={mockDisplayFileContent}
             >
                 <li>Child File</li>
@@ -46,7 +44,7 @@ describe('Folder Component', () => {
         fireEvent.mouseEnter(folderElement!);
         const addFileButton = screen.getByRole('button', { name: /add file/i });
         fireEvent.click(addFileButton);
-        expect(mockHandleAddFile).toHaveBeenCalledWith(
+        expect(mockHandleAddItem).toHaveBeenCalledWith(
             expect.any(Object),
             mockFile
         );
@@ -60,9 +58,10 @@ describe('Folder Component', () => {
             name: /add folder/i,
         });
         fireEvent.click(addFolderButton);
-        expect(mockHandleAddFolder).toHaveBeenCalledWith(
+        expect(mockHandleAddItem).toHaveBeenCalledWith(
             expect.any(Object),
-            mockFile
+            mockFile,
+            'folder'
         );
     });
 

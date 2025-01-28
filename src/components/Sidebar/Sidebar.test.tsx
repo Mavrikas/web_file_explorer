@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import Sidebar from './Sidebar';
 import { Data } from '@/store/types';
+import { renderWithProviders } from '@/test-utils';
 
 const mockFiles: Data[] = [
     {
@@ -21,21 +22,25 @@ const mockFiles: Data[] = [
 
 const mockDisplayFileContent = jest.fn();
 const mockHandleDeleteButton = jest.fn();
-const mockHandleAddFolder = jest.fn();
-const mockHandleAddFile = jest.fn();
-const mockSearchList = jest.fn();
+const mockHandleCreate = jest.fn();
+
+const initState = {
+    files: {
+        files: mockFiles,
+        selectedFile: null,
+        loading: false,
+    },
+};
 
 describe('Sidebar Component', () => {
     beforeEach(() => {
-        render(
+        renderWithProviders(
             <Sidebar
-                files={mockFiles}
                 displayFileContent={mockDisplayFileContent}
                 handleDeleteButton={mockHandleDeleteButton}
-                handleAddFolder={mockHandleAddFolder}
-                handleCreate={mockHandleAddFile}
-                searchList={mockSearchList}
-            />
+                handleCreate={mockHandleCreate}
+            />,
+            { preloadedState: initState }
         );
     });
 
@@ -51,10 +56,10 @@ describe('Sidebar Component', () => {
         expect(screen.getByPlaceholderText('Search')).toBeInTheDocument();
     });
 
-    test('calls searchList on search input change', () => {
+    test('updates search state on input change', () => {
         const searchInput = screen.getByTestId('search');
         fireEvent.change(searchInput, { target: { value: 'test' } });
-        expect(mockSearchList).toHaveBeenCalledWith('test');
+        expect(searchInput).toHaveValue('test');
     });
 
     test('renders the file structure', () => {
@@ -70,15 +75,15 @@ describe('Sidebar Component', () => {
         );
     });
 
-    test('calls handleAddFolder when add folder button is clicked', () => {
+    test('calls handleCreate when add folder button is clicked', () => {
         const addFolderButton = screen.getAllByTestId('addFolder')[0];
         fireEvent.click(addFolderButton);
-        expect(mockHandleAddFolder).toHaveBeenCalled();
+        expect(mockHandleCreate).toHaveBeenCalled();
     });
 
-    test('calls handleAddFile when add file button is clicked', () => {
+    test('calls handleCreate when add file button is clicked', () => {
         const addFileButton = screen.getAllByTestId('addFile')[0];
         fireEvent.click(addFileButton);
-        expect(mockHandleAddFile).toHaveBeenCalled();
+        expect(mockHandleCreate).toHaveBeenCalled();
     });
 });
