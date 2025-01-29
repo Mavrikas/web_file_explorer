@@ -5,7 +5,7 @@ export type Data = {
     content: string | Data[];
 };
 
-export type FileTypes = 'txt' | 'json' | 'png';
+export type FileTypes = 'txt' | 'json';
 
 export type FolderType = 'folder';
 

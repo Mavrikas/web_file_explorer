@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import Modal from '../Modal/Modal';
 import Button from '../Button/Button';
 import { isJson } from '@//utils';
-import { PNG_URL_REGEX } from '@/constants';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import { Data, FileTypes } from '@/store/types';
 
@@ -72,10 +71,7 @@ export default function AddFileModal({
             setErrorContent('Invalid JSON');
             hasError = true;
         }
-        if (selected === 'png' && !contentTrimmed.match(PNG_URL_REGEX)) {
-            setErrorContent('Invalid image URL');
-            hasError = true;
-        }
+
         !hasError && confirmBtn(nameTrimmed, selected, contentTrimmed);
     };
 
@@ -87,41 +83,21 @@ export default function AddFileModal({
     }, [isOpen]);
 
     const getBody = () => {
-        if (selected === 'png') {
-            return (
-                <>
-                    <label htmlFor="url" className="mt-4">
-                        Image URL
-                    </label>
-                    <input
-                        type="input"
-                        id={'url'}
-                        className={`border-2 border-gray-300 rounded-md w-full p-2 ${errorContent && 'border-red-500'}`}
-                        value={content}
-                        onChange={handleContentChange}
-                        data-testid="image-url"
-                    />
-                    <ErrorMessage errorContent={errorContent} />
-                </>
-            );
-        } else {
-            return (
-                <>
-                    <label htmlFor="content" className="mt-4">
-                        Content{' '}
-                        <span className="text-slate-400">(Optional)</span>
-                    </label>
-                    <textarea
-                        id={'content'}
-                        className={`border-2 border-gray-300 rounded-md w-full p-2 ${errorContent && 'border-red-500'}`}
-                        value={content}
-                        onChange={handleContentChange}
-                        data-testid="content"
-                    />
-                    <ErrorMessage errorContent={errorContent} />
-                </>
-            );
-        }
+        return (
+            <>
+                <label htmlFor="content" className="mt-4">
+                    Content <span className="text-slate-400">(Optional)</span>
+                </label>
+                <textarea
+                    id={'content'}
+                    className={`border-2 border-gray-300 rounded-md w-full p-2 ${errorContent && 'border-red-500'}`}
+                    value={content}
+                    onChange={handleContentChange}
+                    data-testid="content"
+                />
+                <ErrorMessage errorContent={errorContent} />
+            </>
+        );
     };
     return (
         isOpen && (
@@ -134,19 +110,6 @@ export default function AddFileModal({
                 <fieldset>
                     <legend>Select file type</legend>
                     <div className="flex justify-between px-[60px]">
-                        <label htmlFor="png">
-                            PNG
-                            <input
-                                className="ml-2"
-                                type="radio"
-                                id="png"
-                                name="type"
-                                value="png"
-                                onChange={handleRadio}
-                                checked={selected === 'png'}
-                                data-testid="png-radio"
-                            />
-                        </label>
                         <label htmlFor="txt">
                             TXT
                             <input

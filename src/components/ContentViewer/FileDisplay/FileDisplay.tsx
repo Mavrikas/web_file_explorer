@@ -12,7 +12,7 @@ type FileDisplayProps = {
 };
 
 export default function FileDisplay({ updateFile }: FileDisplayProps) {
-    const VALID_FILE_TYPES = ['json', 'txt', 'png'];
+    const VALID_FILE_TYPES = ['json', 'txt'];
     const [isEditing, setIsEditing] = useState(false);
     const [content, setContent] = useState('');
     const [errorContent, setErrorContent] = useState('');
@@ -106,8 +106,6 @@ export default function FileDisplay({ updateFile }: FileDisplayProps) {
     };
     const getFileContent = () => {
         switch (getFileType(selectedFile.name)) {
-            case 'png':
-                return getImageDisplay();
             case 'json':
                 return getJsonDisplay();
             case 'txt':
@@ -142,7 +140,7 @@ export default function FileDisplay({ updateFile }: FileDisplayProps) {
     } else {
         return (
             <>
-                {!selectedFile.name.includes('png') && (
+                {
                     <div className="flex justify-between  mt-[20px] mb-[5px] w-[200px]">
                         {isEditing ? (
                             <>
@@ -165,7 +163,7 @@ export default function FileDisplay({ updateFile }: FileDisplayProps) {
                             />
                         )}
                     </div>
-                )}
+                }
 
                 {getFileContent()}
                 <ErrorMessage errorContent={errorContent} />

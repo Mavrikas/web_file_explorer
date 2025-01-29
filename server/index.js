@@ -56,12 +56,8 @@ app.get('/file/:path', async (req, res) => {
             console.error(err);
             return;
         }
-        if (filePath.split('.').pop() === '.png') {
-            res.writeHead(200, { 'Content-Type': 'image/png' });
-            res.end(data);
-        } else {
-            res.send(JSON.stringify(data));
-        }
+
+        res.send(JSON.stringify(data));
     });
 });
 

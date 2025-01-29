@@ -66,19 +66,6 @@ describe('AddFileModal', () => {
         expect(screen.getByText('Invalid JSON')).toBeInTheDocument();
     });
 
-    it('should display error for invalid PNG URL', () => {
-        renderComponent(true);
-        fireEvent.change(screen.getByTestId('file-name'), {
-            target: { value: 'test' },
-        });
-        fireEvent.click(screen.getByTestId('png-radio'));
-        fireEvent.change(screen.getByTestId('image-url'), {
-            target: { value: 'invalid url' },
-        });
-        fireEvent.click(screen.getByText('Confirm'));
-        expect(screen.getByText('Invalid image URL')).toBeInTheDocument();
-    });
-
     it('should call confirmBtn with correct values', () => {
         renderComponent(true);
         fireEvent.change(screen.getByTestId('file-name'), {
