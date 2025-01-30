@@ -90,7 +90,7 @@ export default function Sidebar({
     return (
         <div
             data-testid={'sidebar'}
-            className="max-[720px]:max-w-[100px] max-[720px]:min-w-[100px] max-[720px]:overflow-y-auto p-[20px] border-r-2 border-gray-500 min-w-[300px] max-w-[300px] h-screen overflow-auto "
+            className="max-[720px]:max-w-[150px] max-[720px]:min-w-[150px] max-[720px]:overflow-x-auto p-[20px] border-r-2 border-gray-500 min-w-[300px] max-w-[300px] h-screen overflow-auto overflow-x-hidden"
         >
             <h1 className="text-xl text-black font-bold">My files</h1>
             <ActionButtons
